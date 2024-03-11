@@ -1,9 +1,13 @@
 package com.babelgroup.controllers;
 
+import com.babelgroup.Application;
 import com.babelgroup.dto.AccountDto;
 import com.babelgroup.dto.OperationDto;
+import com.babelgroup.exceptions.AccountNotFoundException;
 import com.babelgroup.model.Operation;
 import com.babelgroup.services.operations.IOperationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +16,7 @@ import java.util.List;
 @RequestMapping("/operation")
 public class OperationController {
 
+    private static final Logger logger = LogManager.getLogger(Application.class);
     private IOperationService operationService;
 
     @GetMapping("/list")
@@ -21,6 +26,10 @@ public class OperationController {
 
     @PostMapping("/add")
     public void addAccounts(@RequestParam OperationDto operation){
-        operationService.addOperation(operation);
+        try {
+            operationService.addOperation(operation);
+        } catch (AccountNotFoundException e) {
+            logger.error(e.getMessage());
+        }
     }
 }

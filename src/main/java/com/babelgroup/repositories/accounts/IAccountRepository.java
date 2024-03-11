@@ -2,6 +2,7 @@ package com.babelgroup.repositories.accounts;
 
 import com.babelgroup.dto.AccountDto;
 import com.babelgroup.dto.ClientDto;
+import com.babelgroup.exceptions.AccountNotFoundException;
 import com.babelgroup.model.Account;
 import com.babelgroup.model.Client;
 
@@ -13,5 +14,5 @@ public interface IAccountRepository {
 
     void addAccount(Account account);
 
-    Account getAccountByIban(String iban);
+    Account getAccountByIban(String iban) throws AccountNotFoundException;
 }

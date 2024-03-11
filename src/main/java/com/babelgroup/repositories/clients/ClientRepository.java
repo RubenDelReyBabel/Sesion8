@@ -1,5 +1,6 @@
 package com.babelgroup.repositories.clients;
 
+import com.babelgroup.exceptions.ClientNotFoundException;
 import com.babelgroup.model.Client;
 import org.springframework.stereotype.Repository;
 
@@ -12,19 +13,26 @@ public class ClientRepository implements IClientRepository{
     private List<Client> clients;
 
     @Override
-    public Client getClientByUsername(String username) {
+    public Client getClientByUsername(String username) throws ClientNotFoundException {
         init();
-        return clients.stream().filter(c -> {
-            System.out.println(c.getUsername() + " - " + username);
-            System.out.println(c.getUsername().equals(username));
-            return c.getUsername().equals(username);
-        }).toList().get(0);
+        List<Client> foundClients = clients.stream().filter(c -> c.getUsername().equals(username)).toList();
+
+        if (foundClients.isEmpty()){
+            throw new ClientNotFoundException(String.format("Account not found for username %s", username));
+        }
+
+        return foundClients.get(0);
     }
 
     @Override
-    public Client getClientById(Long id) {
+    public Client getClientById(Long id) throws ClientNotFoundException {
         init();
-        return clients.stream().filter(c -> c.getId().equals(id)).toList().get(0);
+        List<Client> foundClients = clients.stream().filter(c -> c.getId().equals(id)).toList();
+
+        if (foundClients.isEmpty()){
+            throw new ClientNotFoundException(String.format("Account not found for id %x", id));
+        }
+        return foundClients.get(0);
     }
 
     private void init(){
@@ -37,10 +45,5 @@ public class ClientRepository implements IClientRepository{
             client.setSurname("surname");
             clients.add(client);
         }
-        Client client = new Client();
-        client.setUsername("username");
-        client.setName("name");
-        client.setSurname("surname");
-        clients.add(client);
     }
 }
